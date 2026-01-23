@@ -1,8 +1,8 @@
 import z from "zod";
 
-import { RouteHandler } from "../../types/http";
-import { sendJSON } from "../router";
-import { addArtistService } from "../../services/addArtistService";
+import { RouteHandler } from "../../types/http.js";
+import { sendJSON } from "../router.js";
+import { addArtistService } from "../../services/addArtistService.js";
 
 // Zod Schemas for parsing body/input
 export const AddMusicArtistSchema = z.object({
@@ -43,7 +43,7 @@ export const post: RouteHandler = async (req, res, url) => {
     try {
         addArtistService(parsedBody.data.genre, parsedBody.data.artist);
     } catch (error: any) {
-        if (error.message.contains('already exists in')) {
+        if (error.message.includes('already exists in')) {
             sendJSON(res, 409, { error: error.message });
             return;
         }

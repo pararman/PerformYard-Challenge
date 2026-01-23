@@ -21,11 +21,12 @@ import { getPeople, getGenres } from './databaseService.js'
 export function searchService(query: String) {
     const queryLowerCase = query.toLowerCase();
     const people = getPeople();
+    const genreList = getGenres();
     const searchResults = [];
     for (const person of people) {
         let score = 0
         const matches = [];
-        console.log(person);
+        let artistMatched = false;
         // Name match
         if (person.name.toLowerCase().includes(queryLowerCase)) {
             console.log("Matched: " + person.name);
@@ -51,17 +52,20 @@ export function searchService(query: String) {
             matches.push('location');
         }
         // Musical artist match
-        const genreList = getGenres();
         for (const genre of person.musicGenres) {
             if (genreList[genre]) {
                 console.log('Checking genre: ' + genre);
                 for (const artist of genreList[genre]) {
                     if (artist.toLowerCase().includes(queryLowerCase)) {
-                        score += 2;
-                        matches.push('artist');
-                        break; // Only count one artist match per genre as we don't want to track duplicates
+                        if (!artistMatched) {
+                            score += 2;
+                            matches.push('artist');
+                            artistMatched = true;
+                        }
+                        break; // Only count one artist match per genre
                     }
                 }
+                if (artistMatched) break; // Stop checking other genres if we found an artist match
             }
         }
         if (score > 0) {
@@ -71,7 +75,12 @@ export function searchService(query: String) {
             console.log(`Person: ${person.name} has no matches.`);
         }
     }
-    // Sort results by score descending
-    searchResults.sort((a, b) => b.score - a.score);
+    // Sort results by score descending, then by name ascending
+    searchResults.sort((a, b) => {
+        if (b.score !== a.score) {
+            return b.score - a.score;
+        }
+        return a.name.localeCompare(b.name);
+    });
     return searchResults;
 }

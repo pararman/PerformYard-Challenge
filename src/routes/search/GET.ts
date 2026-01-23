@@ -1,7 +1,7 @@
 import z from "zod";
 
-import { RouteHandler } from "../../types/http";
-import { sendJSON } from "../router"
+import { RouteHandler } from "../../types/http.js";
+import { sendJSON } from "../router.js";
 import { searchService } from "../../services/searchService.js";
 
 // Zod Schemas for parsing body/input

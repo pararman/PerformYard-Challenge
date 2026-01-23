@@ -1,0 +1,230 @@
+openapi: 3.0.3
+info:
+  title: PerformYard Search API
+  description: API for searching people by various attributes and adding music artists to genres
+  version: 1.0.0
+  contact:
+    name: API Support
+  license:
+    name: MIT
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+
+tags:
+  - name: Search
+    description: Search operations for finding people
+  - name: Artists
+    description: Operations for managing music artists
+
+paths:
+  /search:
+    get:
+      tags:
+        - Search
+      summary: Search for people
+      description: |
+        Search people by name, music genre, movies, location, and artists with weighted scoring:
+        - Name: 4 points
+        - Artists: 2 points
+        - Genre, Movies, Location: 1 point each
+
+        Case-insensitive substring matching is used. Each property is counted once max.
+        Returns results with score > 0, sorted by score then name.
+      operationId: searchPeople
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: Search query string to match against people's attributes
+          schema:
+            type: string
+            minLength: 1
+          example: "nni"
+      responses:
+        '200':
+          description: Successful search
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SearchResult'
+              examples:
+                successfulSearch:
+                  summary: Example search results
+                  value:
+                    message:
+                      - name: "Bonnie Wang"
+                        score: 4
+                        matches: ["name"]
+                      - name: "Greta Heissenberger"
+                        score: 2
+                        matches: ["artists"]
+        '400':
+          description: Invalid query parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                missingQuery:
+                  summary: Missing or empty query parameter
+                  value:
+                    error: "Invalid query parameter"
+                    details:
+                      - code: "too_small"
+                        minimum: 1
+                        type: "string"
+                        inclusive: true
+                        exact: false
+                        message: 'Query parameter "query" is required'
+                        path: ["query"]
+
+  /artist:
+    post:
+      tags:
+        - Artists
+      summary: Add a music artist to a genre
+      description: |
+        Add an artist to a specific music genre. Artists cannot be duplicated within a genre.
+      operationId: addMusicArtist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddArtistRequest'
+            examples:
+              addArtist:
+                summary: Add artist to genre
+                value:
+                  genre: "Rock"
+                  artist: "Led Zeppelin"
+      responses:
+        '201':
+          description: Artist added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Artist added successfully"
+              examples:
+                success:
+                  summary: Successful addition
+                  value:
+                    message: "Artist added successfully"
+        '400':
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                invalidBody:
+                  summary: Invalid JSON body
+                  value:
+                    error: "Invalid JSON body"
+                missingFields:
+                  summary: Missing required fields
+                  value:
+                    error: "Invalid body parameters"
+                    details:
+                      - code: "too_small"
+                        minimum: 1
+                        type: "string"
+                        inclusive: true
+                        exact: false
+                        message: "Genre is required"
+                        path: ["genre"]
+        '409':
+          description: Artist already exists in the genre
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Artist already exists in genre"
+              examples:
+                duplicate:
+                  summary: Duplicate artist
+                  value:
+                    error: "Artist already exists in Rock"
+
+components:
+  schemas:
+    SearchResult:
+      type: object
+      required:
+        - name
+        - score
+        - matches
+      properties:
+        name:
+          type: string
+          description: Name of the person
+          example: "Bonnie Wang"
+        score:
+          type: number
+          description: Weighted score based on matching attributes
+          minimum: 0
+          example: 4
+        matches:
+          type: array
+          description: Array of attribute types that matched the search query
+          items:
+            type: string
+            enum:
+              - name
+              - artists
+              - musicGenres
+              - movies
+              - location
+          example: ["name", "artists"]
+
+    AddArtistRequest:
+      type: object
+      required:
+        - genre
+        - artist
+      properties:
+        genre:
+          type: string
+          description: Music genre to add the artist to
+          minLength: 1
+          example: "Rock"
+        artist:
+          type: string
+          description: Name of the artist to add
+          minLength: 1
+          example: "Led Zeppelin"
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message describing what went wrong
+        details:
+          type: array
+          description: Detailed validation errors (optional)
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+              message:
+                type: string
+              path:
+                type: array
+                items:
+                  type: string

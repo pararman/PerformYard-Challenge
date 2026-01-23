@@ -1,8 +1,8 @@
 import http from 'node:http';
 import { URL } from 'node:url';
 
-import { post } from "./artists/POST";
-import { get } from "./search/GET";
+import { post } from "./artists/POST.js";
+import { get } from "./search/GET.js";
 import { Route } from "../types/http.js";
 
 export const routes: Route[] = [
