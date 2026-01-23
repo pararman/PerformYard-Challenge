@@ -1,13 +1,8 @@
 import http from 'node:http';
-import { URL } from 'node:url';
 
 import { handleRoute } from './routes/router.js' 
 
 const PORT = 3000;
-
-
-// Types
-import { Route } from './types/http.js';
 
 async function requestHandler(
   req: http.IncomingMessage,
@@ -17,9 +12,7 @@ async function requestHandler(
   await handleRoute(req, res);
 }
 
-/**
- * Create and start the HTTP server
- */
+// Create and start the HTTP server
 export function createServer(): http.Server {
   return http.createServer(requestHandler);
 }
@@ -31,5 +24,4 @@ server.listen(PORT, () => {
   console.log(`API endpoints:`);
   console.log(`  GET  /search?query=<query>`);
   console.log(`  POST /artist`);
-  console.log(`  GET  /health`);
 }); 

@@ -1,7 +1,32 @@
+import z from "zod";
+
 import { RouteHandler } from "../../types/http";
 import { sendJSON } from "../router"
+import { searchService } from "../../services/searchService.js";
 
+// Zod Schemas for parsing body/input
+export const SearchQuerySchema = z.object({
+  query: z.string().min(1, 'Query parameter "query" is required')
+});
+
+export const SearchResultSchema = z.object({
+  name: z.string(),
+  score: z.number(),
+  matches: z.array(z.string())
+});
+
+export type SearchQuery = z.infer<typeof SearchQuerySchema>;
+export type SearchResult = z.infer<typeof SearchResultSchema>;
+
+// Route Handler for invoking the searchService
 export const get: RouteHandler = async (req, res, url) => {
-    console.log("get invoked!")
-    sendJSON(res, 200, {message: 'GET Worked'});
+    console.log("GET invoked!")
+    const queryParams = { query: url.searchParams.get('query') || '' };
+    const parsedQuery = SearchQuerySchema.safeParse(queryParams);
+    if (!parsedQuery.success) {
+        sendJSON(res, 400, { error: 'Invalid query parameter', details: parsedQuery.error.errors });
+        return;
+    }
+    const matches = searchService(parsedQuery.data.query);
+    sendJSON(res, 200, {message: matches});
 }
