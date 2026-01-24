@@ -1,12 +1,12 @@
-import http from 'node:http';
+import http from "node:http";
 
-import { handleRoute } from './routes/router.js' 
+import { handleRoute } from "./routes/router.js";
 
 const PORT = 3000;
 
 async function requestHandler(
   req: http.IncomingMessage,
-  res: http.ServerResponse
+  res: http.ServerResponse,
 ): Promise<void> {
   // Delegate to route handler
   await handleRoute(req, res);
@@ -24,4 +24,4 @@ server.listen(PORT, () => {
   console.log(`API endpoints:`);
   console.log(`  GET  /search?query=<query>`);
   console.log(`  POST /artist`);
-}); 
+});

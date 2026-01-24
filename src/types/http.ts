@@ -1,5 +1,5 @@
-import http from 'node:http';
-import { URL } from 'node:url';
+import type http from "node:http";
+import type { URL } from "node:url";
 
 /**
  * Route handler function type
@@ -8,7 +8,7 @@ import { URL } from 'node:url';
 export type RouteHandler = (
   req: http.IncomingMessage,
   res: http.ServerResponse,
-  url: URL
+  url: URL,
 ) => Promise<void> | void;
 
 /**

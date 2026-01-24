@@ -12,6 +12,8 @@ This has 3 main layers:
 
 `databaseService` layer, loads the data from the .json file and stores and loads data in memory for any queries. 
 
+# Developing
+
 How to run:
 `npm install`
 `npm run build`
@@ -24,3 +26,11 @@ curl -s \
   -X POST "http://localhost:3000/artist" \
   -H "Content-Type: application/json" \
   -d '{"genre": "Classical", "artist": "Beethoven"}' | jq .
+
+# Testing
+Unit tests can be run using `npm run test`
+Coverage can be checked using `npm run test:coverage`
+
+# Linting
+This project uses `Biome` to lint.
+Linting can be run with `npm run lint`
