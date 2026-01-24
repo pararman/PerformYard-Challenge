@@ -2,7 +2,7 @@
 
 A simple Node-native API that searches a data set and adds to a dataset.
 
-This has 3 main layers:
+This has a server and 3 main layers:
 
 `index.ts`, runs the actual server.
 
@@ -29,8 +29,12 @@ curl -s \
 
 # Testing
 Unit tests can be run using `npm run test`
+
 Coverage can be checked using `npm run test:coverage`
 
 # Linting
 This project uses `Biome` to lint.
+
 Linting can be run with `npm run lint`
+
+File formatting can be run with `npm run format`
