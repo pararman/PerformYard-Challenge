@@ -185,11 +185,11 @@ components:
             type: string
             enum:
               - name
-              - artists
-              - musicGenres
-              - movies
+              - artist
+              - genre
+              - movie
               - location
-          example: ["name", "artists"]
+          example: ["name", "artist"]
 
     AddArtistRequest:
       type: object
