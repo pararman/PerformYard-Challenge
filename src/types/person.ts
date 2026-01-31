@@ -10,11 +10,4 @@ export const PersonSchema = z.object({
   location: z.string(),
 });
 
-export const SearchResultSchema = z.object({
-  name: z.string(),
-  score: z.number(),
-  matches: z.array(z.string()),
-});
-
 export type Person = z.infer<typeof PersonSchema>;
-export type SearchResult = z.infer<typeof SearchResultSchema>;
