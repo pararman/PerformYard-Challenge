@@ -18,6 +18,7 @@ export const post: RouteHandler = async (req, res, _url) => {
   // Process body
   let bodyParams = {};
   try {
+    // Parses the ReadableStream object from the request.
     const bodyText = await new Promise<string>((resolve, reject) => {
       let data = "";
       req.on("data", (chunk) => {
@@ -43,7 +44,6 @@ export const post: RouteHandler = async (req, res, _url) => {
     });
     return;
   }
-  // Here you would typically add the artist to your data store
   try {
     addArtistService(parsedBody.data.genre, parsedBody.data.artist);
     // biome-ignore lint/suspicious/noExplicitAny: Need to access error.message property
