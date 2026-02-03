@@ -2,6 +2,7 @@
 
 // involved later on. Also keeps the route handler cleaner.
 
+import { incrementCacheVersion } from "./cacheService.js";
 import { addMusicalArtist, getGenres } from "./databaseService.js";
 
 /**
@@ -19,4 +20,7 @@ export function addArtistService(genre: string, artist: string): void {
   }
   // Add the new artist
   addMusicalArtist(genre, artist);
+
+  // clear the cache (increment version and wipe out existing values)
+  incrementCacheVersion();
 }
