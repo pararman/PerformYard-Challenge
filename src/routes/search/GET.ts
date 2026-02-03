@@ -7,6 +7,8 @@ import { sendJSON } from "../router.js";
 export const SearchQuerySchema = z
   .object({
     query: z.string().min(1, 'Query parameter "query" is required'),
+    sort: z.string().optional(),
+    isAscending: z.string().optional(),
   })
   .strict();
 
@@ -32,6 +34,6 @@ export const get: RouteHandler = async (_req, res, url) => {
     });
     return;
   }
-  const matches = searchService(parsedQuery.data.query);
+  const matches = searchService(parsedQuery.data.query, parsedQuery.data.sort, parsedQuery.data.isAscending);
   sendJSON(res, 200, { message: matches });
 };
